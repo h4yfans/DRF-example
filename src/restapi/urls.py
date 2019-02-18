@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from updates.views import update_model_detail_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', update_model_detail_view),
 ]
