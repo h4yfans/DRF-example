@@ -36,7 +36,7 @@ class JsonCBV2(JsonResponseMixin, View):
 
 class SerializedDetailView(JsonResponseMixin, View):
     def get(self, request, *args, **kwargs):
-        obj = Update.objects.get(id=1)
+        obj = Update.objects.get(pk=1)
         json_data = obj.serialize()
 
         return HttpResponse(json_data, content_type='application/json')
