@@ -7,6 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/status/', include('status.api.urls')),
     path('api/updates/', include('updates.api.urls')),
-    path('api/auth/jwt', obtain_jwt_token),
-    path('api/auth/jwt/refresh/', refresh_jwt_token),
+    path('api/auth/', include('accounts.api.urls')),
+
 ]
