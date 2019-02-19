@@ -4,16 +4,16 @@ from .views import (
     StatusListSearchAPIView,
     StatusCreateAPIView,
     StatusDetailAPIView,
-    # StatusUpdateAPIView,
-    # StatusDeleteAPIView
+    StatusUpdateAPIView,
+    StatusDeleteAPIView
 )
 
 urlpatterns = [
     path('', StatusAPIView.as_view()),
     path('create/', StatusCreateAPIView.as_view()),
     path('<pk>/', StatusDetailAPIView.as_view()),
-    # path('<pk>/update', StatusUpdateAPIView.as_view()),
-    # path('<pk>/delete', StatusDeleteAPIView.as_view()),
+    path('<pk>/update', StatusUpdateAPIView.as_view()),
+    path('<pk>/delete', StatusDeleteAPIView.as_view()),
     # path('', json_example_view),
     # path('json/cbv', JsonCBV.as_view()),
     # path('json/cbv2', JsonCBV2.as_view()),
