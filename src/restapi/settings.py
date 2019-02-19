@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'updates',
     'status',
+    'accounts',
     # thirdparty
     'rest_framework'
 ]
