@@ -3,7 +3,7 @@ from .views import (
     StatusAPIView,
     StatusListSearchAPIView,
     StatusCreateAPIView,
-    # StatusDetailAPIView,
+    StatusDetailAPIView,
     # StatusUpdateAPIView,
     # StatusDeleteAPIView
 )
@@ -11,7 +11,7 @@ from .views import (
 urlpatterns = [
     path('', StatusAPIView.as_view()),
     path('create/', StatusCreateAPIView.as_view()),
-    # path('<pk>/', StatusDetailAPIView.as_view()),
+    path('<pk>/', StatusDetailAPIView.as_view()),
     # path('<pk>/update', StatusUpdateAPIView.as_view()),
     # path('<pk>/delete', StatusDeleteAPIView.as_view()),
     # path('', json_example_view),
