@@ -12,7 +12,7 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 User = get_user_model()
 
 
-class AuthView(APIView):
+class AuthAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -21,7 +21,6 @@ class AuthView(APIView):
         data = request.data
         username = data.get('username')
         password = data.get('password')
-        user = authenticate(username=username, password=password)
         qs = User.objects.filter(
             Q(username__iexact=username) |
             Q(email__iexact=username)
@@ -34,3 +33,35 @@ class AuthView(APIView):
                 token = jwt_encode_handler(payload)
                 return Response({'token': token})
         return Response({'detail': 'Invalid credentials'}, status=401)
+
+
+class RegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return Response({'detail': 'You are already register and are authenticated!'}, status=400)
+        data = request.data
+        username = data.get('username')
+        password = data.get('password')
+        password2 = data.get('password2')
+        email = data.get('email')
+
+        qs = User.objects.filter(
+            Q(username__iexact=username) |
+            Q(email__iexact=username)
+        )
+        if password != password2:
+            return Response({'password': 'Password must match'}, status=401)
+        if qs.exists():
+            return Response({'detail': 'This user already exists'}, status=401)
+        else:
+            user = User.objects.create(username=username, email=email)
+            user.set_password(password)
+            user.save()
+            # payload = jwt_payload_handler(user)
+            # token = jwt_encode_handler(payload)
+            # return Response({'token': token},status=201)
+            return Response({'detail': 'Thank you for registering. Please verify your email'}, status=200)
+
+        return Response({'detail': 'Invalid Request'}, status=400)
