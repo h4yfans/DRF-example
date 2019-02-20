@@ -2,6 +2,7 @@ import json
 from rest_framework import generics, mixins, permissions
 from rest_framework.authentication import SessionAuthentication
 
+from accounts.api.permissions import IsOwnerOrReadOnly
 from status.models import Status
 from .serializers import StatusSerializer
 
@@ -15,10 +16,11 @@ def is_json(json_data):
     return is_valid
 
 
-class StatusDetailAPIView(mixins.UpdateModelMixin,
-                          mixins.DestroyModelMixin,
-                          generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+class StatusDetailAPIView(
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = StatusSerializer
     queryset = Status.objects.all()
 
