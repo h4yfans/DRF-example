@@ -10,17 +10,17 @@ from rest_framework.response import Response
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
 User = get_user_model()
 expire_delta = settings.JWT_AUTH['JWT_REFRESH_EXPIRATION_DELTA']
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     token = serializers.SerializerMethodField(read_only=True)
     expires = serializers.SerializerMethodField(read_only=True)
-    token_response = serializers.SerializerMethodField(read_only=True)
+    message = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
@@ -31,15 +31,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'password2',
             'token',
             'expires',
-            'token_response'
+            'message'
         ]
         extra_kwargs = {'password': {'write_only': True}}
 
-    def get_token_response(self, obj):
-        user = obj
-        payload = jwt_payload_handler(user)
-        token = jwt_encode_handler(payload)
-        return Response({'token': token}, status=201)
+    def get_message(self, obj):
+        return 'Thank you for registering. Please verify your email before continuing.'
 
     def get_expires(self, obj):
         return timezone.now() + expire_delta - datetime.timedelta(seconds=200)
@@ -70,10 +67,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        print(validated_data)
         user_obj = User.objects.create(
             username=validated_data.get('username'),
             email=validated_data.get('email'))
         user_obj.set_password(validated_data.get('password'))
+        user_obj.is_active = False
         user_obj.save()
         return user_obj
