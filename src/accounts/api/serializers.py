@@ -11,9 +11,24 @@ from rest_framework.response import Response
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
+expire_delta = settings.JWT_AUTH['JWT_REFRESH_EXPIRATION_DELTA']
 
 User = get_user_model()
-expire_delta = settings.JWT_AUTH['JWT_REFRESH_EXPIRATION_DELTA']
+
+
+class UserPublicSerializer(serializers.ModelSerializer):
+    uri = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'uri'
+        ]
+
+    def get_uri(self, obj):
+        return f'/api/users/{obj.id}'
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

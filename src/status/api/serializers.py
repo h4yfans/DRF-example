@@ -1,22 +1,46 @@
 from rest_framework import serializers
 from status.models import Status
 
+from accounts.api.serializers import UserPublicSerializer
+
 
 # class CustomSerializer(serializers.Serializer):
 #     content = serializers.CharField()
 #     email = serializers.EmailField()
 #
+class StatusInlineUserSerializer(serializers.ModelSerializer):
+    uri = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Status
+        fields = [
+            'id',
+            'content',
+            'image',
+            'uri'
+        ]
+
+    def get_uri(self, obj):
+        return f'api/status/{obj.id}'
+
 
 class StatusSerializer(serializers.ModelSerializer):
+    uri = serializers.SerializerMethodField(read_only=True)
+    user = UserPublicSerializer(read_only=True)
+
     class Meta:
         model = Status
         fields = [
             'id',
             'user',
             'content',
-            'image'
+            'image',
+            'uri'
         ]
         read_only_fields = ['user']  # GET #readyonly_fields
+
+    def get_uri(self, obj):
+        return f'api/status/{obj.id}'
 
     # def validate_content(self, value):
     #     if len(value) > 10000:
